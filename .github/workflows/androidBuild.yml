@@ -23,7 +23,7 @@ jobs:
           cache : 'gradle'
 
       - name: List files in current directory
-        run: ls -la automate
+        run: ls -la android
 
       - name: Navigate to android project
         run : cd android
