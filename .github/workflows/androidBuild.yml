@@ -1,0 +1,66 @@
+name: Android Build
+
+on:
+  #To trigger manually
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          ref: deployment
+
+      - name: Set Up JDK              // 1
+        uses: actions/setup-java@v3
+        with:
+          distribution : "zulu"
+          java-version: '11'
+          cache : 'gradle'
+
+      - name: List files in current directory
+        run: ls -la automate
+
+      - name: Navigate to android project
+        run : cd android
+
+      - name: List files in android directory
+        run: ls -la
+        working-directory: android
+
+      - name: Change wrapper permissions  // 2
+        run: chmod +x ./gradlew
+        working-directory: android
+
+      - name: Run Tests                   // 3
+        run: ./gradlew test
+        working-directory: android
+
+      - name: Build Project               // 4
+        run: ./gradlew build
+        working-directory: android
+
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease
+        working-directory: android
+
+      - name: Sign AAB
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: automate/app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.SIGN_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.STORE_KEY_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Deploy to Play Store internal  // 3
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT}}
+          packageName: com.FlutterAuto.automateApp
+          releaseFiles: automate/app/build/outputs/bundle/release/app-release.aab
+          track: qa
