@@ -36,6 +36,9 @@ jobs:
         run: chmod +x ./gradlew
         working-directory: android
 
+      - name: Add gradle wrapper
+        run : gradle wrapper
+
       - name: Build Project               // 4
         run: ./gradlew test
         working-directory: android
