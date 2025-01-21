@@ -1,69 +1,88 @@
 name: Android Build
 
 on:
-  #To trigger manually
-  workflow_dispatch:
+  pull_request:
+    branches: [test]
+
   push:
-    branches: [ master ]
+    branches: [ test ]
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2.3.4
+      - name : 'checkout-repository'
+        uses: actions/checkout@v3
         with:
-          ref: master
+          ref: test
 
-      - name: Set Up JDK              // 1
-        uses: actions/setup-java@v3
+      - name: Set Up Java              // 1
+        uses: actions/setup-java@v3.12.0
         with:
-          distribution : "zulu"
-          java-version: '11'
-          cache : 'gradle'
+          distribution : 'oracle'
+          java-version: '21'
 
-      - name: List files in current directory
-        run: ls -la android
-
-      - name: Navigate to android project
-        run : cd android
-
-      - name: List files in android directory
-        run: ls -la
-        working-directory: android
-
-      - name: Change wrapper permissions  // 2
-        run: chmod +x ./gradlew
-        working-directory: android
-
-      - name: Add gradle wrapper
-        run : gradle wrapper
-
-      - name: Build Project               // 4
-        run: ./gradlew test
-        working-directory: android
-
-      - name: Build Project               // 4
-        run: ./gradlew build
-        working-directory: android
-
-      - name: Build Release AAB
-        run: ./gradlew bundleRelease
-        working-directory: android
-
-      - name: Sign AAB
-        uses: r0adkll/sign-android-release@v1
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          releaseDirectory: automate/app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.SIGN_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.STORE_KEY_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          flutter-version: '3.22.2'
+          channel: 'stable'
 
-      - name: Deploy to Play Store internal  // 3
-        uses: r0adkll/upload-google-play@v1
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/automationKey.jks
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=automationKey.jks" >> android/key.properties
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Build appBundle
+        run: flutter build appbundle
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
         with:
-          serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT}}
-          packageName: com.FlutterAuto.automateApp
-          releaseFiles: automate/app/build/outputs/bundle/release/app-release.aab
-          track: qa
+          name: Releases
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+
+      - name: Extract version from pubspec.yaml
+        id: extract_version
+        run: |
+          version=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      - name: Check if Tag Exists
+        id: check_tag
+        run: |
+          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "TAG_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Modify Tag
+        if: env.TAG_EXISTS == 'true'
+        id: modify_tag
+        run: |
+          new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
+          echo "VERSION=$new_version" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/flutter-apk/app-release.apk,build/app/outputs/bundle/release/app-release.aab"
+          tag: v${{ env.VERSION }}
+          token: ${{ secrets.TOKEN }}
