@@ -36,10 +36,6 @@ jobs:
         run: chmod +x ./gradlew
         working-directory: android
 
-      - name: Run Tests                   // 3
-        run: ./gradlew test
-        working-directory: android
-
       - name: Build Project               // 4
         run: ./gradlew build
         working-directory: android

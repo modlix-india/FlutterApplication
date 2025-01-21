@@ -42,7 +42,9 @@ class _MyAppState extends State<MyApp> {
       mediaPlaybackRequiresUserGesture: false,
       allowsInlineMediaPlayback: true,
       iframeAllow: "camera; microphone",
-      iframeAllowFullscreen: true);
+      iframeAllowFullscreen: true,
+      javaScriptEnabled: true
+  );
 
   PullToRefreshController? pullToRefreshController;
   String url = "";
