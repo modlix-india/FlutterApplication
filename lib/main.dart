@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 WebViewEnvironment? webViewEnvironment;
 
@@ -42,7 +41,9 @@ class _MyAppState extends State<MyApp> {
       mediaPlaybackRequiresUserGesture: false,
       allowsInlineMediaPlayback: true,
       iframeAllow: "camera; microphone",
-      iframeAllowFullscreen: true);
+      iframeAllowFullscreen: true,
+      javaScriptEnabled: true
+  );
 
   PullToRefreshController? pullToRefreshController;
   String url = "";
@@ -128,14 +129,9 @@ class _MyAppState extends State<MyApp> {
                           "javascript",
                           "about"
                         ].contains(uri.scheme)) {
-                          if (await canLaunchUrl(uri)) {
-                            // Launch the App
-                            await launchUrl(
-                              uri,
-                            );
-                            // and cancel the request
+
                             return NavigationActionPolicy.CANCEL;
-                          }
+
                         }
 
                         return NavigationActionPolicy.ALLOW;
