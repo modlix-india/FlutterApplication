@@ -2,6 +2,7 @@ gradle-wrapper.jar
 /.gradle
 /captures/
 /local.properties
+/*.properties
 GeneratedPluginRegistrant.java
 
 # Remember to never publicly share your keystore.
