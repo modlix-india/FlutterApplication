@@ -12,7 +12,7 @@ if (keystorePropertiesFile.exists()) {
 
 
 android {
-    namespace = "com.modlixexample.automate"
+    namespace = "com.FlutterAuto.automateApp"
     compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
