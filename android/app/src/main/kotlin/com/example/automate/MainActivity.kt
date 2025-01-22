@@ -1,4 +1,4 @@
-package com.modlixexample.automate
+package com.FlutterAuto.automateApp
 
 import io.flutter.embedding.android.FlutterActivity
 
