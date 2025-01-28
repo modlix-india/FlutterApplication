@@ -9,7 +9,7 @@
 <key>provisioningProfiles</key>
 <dict>
    <key>com.FlutterAuto.automateApp</key>
-   <string>bundle identifier</string>
+   <string>iOS Team Provisioning Profile: com.FlutterAuto.automateApp</string>
 </dict>
 </dict>
 </plist>
