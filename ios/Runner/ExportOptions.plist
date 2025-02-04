@@ -8,7 +8,7 @@
 <string>YAN363KYTD</string>
 <key>provisioningProfiles</key>
 <dict>
-   <key>com.FlutterAuto.automateApp</key>
+   <key>YAN363KYTD.com.FlutterAuto.automateApp</key>
    <string>iOS Team Provisioning Profile: com.FlutterAuto.automateApp</string>
 </dict>
 </dict>
