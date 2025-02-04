@@ -49,6 +49,15 @@ jobs:
       # Install your project's dependencies
       - run: flutter pub get
 
+      - name: Debug Provisioning Profiles
+        run: ls -al ~/Library/MobileDevice/Provisioning\ Profiles/
+
+      - name: Register Provisioning Profile
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $RUNNER_TEMP/build_pp.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+
+
       # Build and sign the ipa using a single flutter command
       - name: Building IPA
         run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
