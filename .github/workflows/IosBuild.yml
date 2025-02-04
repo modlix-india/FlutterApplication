@@ -52,15 +52,22 @@ jobs:
       - name: Debug Provisioning Profiles
         run: ls -al ~/Library/MobileDevice/Provisioning\ Profiles/
 
-      - name: Register Provisioning Profile
-        run: |
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $RUNNER_TEMP/build_pp.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
-
 
       # Build and sign the ipa using a single flutter command
-      - name: Building IPA
-        run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
+      - name: Building IPA with xcodebuild
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+                     -scheme Runner \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     -archivePath build/ios/archive.xcarchive \
+                    archive
+          
+          xcodebuild -exportArchive \
+                     -archivePath build/ios/archive.xcarchive \
+                     -exportOptionsPlist ios/Runner/ExportOptions.plist \
+                     -allowProvisioningUpdates \
+                     -exportPath build/ios/ipa
 
       # Collect the file and upload as artifact
       - name: collect ipa artifacts
