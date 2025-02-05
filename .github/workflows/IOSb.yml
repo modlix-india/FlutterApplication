@@ -2,7 +2,7 @@ name: IOS build and deploy
 
 on:
   push:
-    branches: ["IOSRelease"]
+    branches: ["IOSBuildRelease"]
 
 jobs:
   build:
