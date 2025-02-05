@@ -61,6 +61,7 @@ jobs:
                      -sdk iphoneos \
                      -configuration Release \
                      -archivePath build/ios/archive.xcarchive \
+                     -allowProvisioningUpdates
                     archive
           
           xcodebuild -exportArchive \
