@@ -10,6 +10,33 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Import certificates (iOS)
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.iOS_P12_DISTRIBUTION_CERT_BASE64 }}
+          P12_PASSWORD: ${{ secrets.iOS_P12_DISTRIBUTION_CERT_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.iOS_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.iOS_KEYCHAIN_PASSWORD }}
+          run: |
+            # create variables         
+            CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12                
+            PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+            KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+            
+          # import certificate and provisioning profile from secrets
+            echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+            echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o
+            $PP_PATH
+          # create temporary keychain         
+            security create-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+            security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+            security unlock-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+          # import certificate to keychain           
+            security import $CERTIFICATE_PATH -P $P12_PASSWORD -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+            security list-keychains -d user -s $KEYCHAIN_PATH
+          # apply provisioning profile
+            mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+            cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
       - name: Flutter get
         uses: subosito/flutter-action@v2
         with:
@@ -18,3 +45,33 @@ jobs:
           cache: true
       - name: Get dependencies
         run: flutter pub get
+      - name: Build iOS application archive
+        run: flutter build ipa --export-options-plist=ios/exportOptions.plist
+
+      - name: Decode App Store Connect private key file and save it
+        env:
+          API_KEY_BASE64: ${{ secrets.iOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
+          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+        run: |
+          mkdir -p ~/private_keys
+          ls ~/private_keys
+          echo -n "$API_KEY_BASE64" | base64 --decode -o ~/private_keys/AuthKey_$API_KEY.p8
+          echo "After saving: "
+          ls ~/private_keys
+
+      - name: Upload to App Store Connect
+        env:
+            ISSUER_ID: ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }}
+            API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
+        run: |
+            echo "Before uploading: "
+            ls ~/private_keys
+            xcrun altool --upload-app -f build/ios/ipa/flutter_app.ipa -t ios --apiKey $API_KEY --apiIssuer "$ISSUER_ID"
+            ls ~/private_keys
+
+      - name: Clean up keychain and provisioning profile
+        if: ${{ always() }}
+        run: |
+            security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+            rm ~/Library/MobileDevice/Provisioning\
+            Profiles/build_pp.mobileprovision
