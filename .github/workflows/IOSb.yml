@@ -16,7 +16,7 @@ jobs:
           P12_PASSWORD: ${{ secrets.iOS_P12_DISTRIBUTION_CERT_PASSWORD }}
           BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.iOS_PROVISION_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ secrets.iOS_KEYCHAIN_PASSWORD }}
-          run: >
+        run: >
             # create variables         
 
             CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12                
