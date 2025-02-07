@@ -12,5 +12,11 @@
           <key>com.FlutterAuto.automateApp</key>
           <string>inAppBrowserProvision</string>
        </dict>
+      <key>signingStyle</key>
+       <string>manual</string>
+       <key>compileBitcode</key>
+       <false/>
+       <key>destination</key>
+       <string>export</string>
    </dict>
 </plist>
