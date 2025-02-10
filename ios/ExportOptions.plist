@@ -5,12 +5,13 @@
    <dict>
        <key>method</key>
        <string>app-store</string>
+       <key>signingStyle</key>
+       <string>automatic</string>
        <key>teamID</key>
        <string>YAN363KYTD</string>
-       <key>provisioningProfiles</key>
-       <dict>
-          <key>com.FlutterAuto.automateApp</key>
-          <string>inAppBrowserProvision</string>
-       </dict>
+       <key>compileBitcode</key>
+       <false/>
+       <key>destination</key>
+       <string>export</string>
    </dict>
 </plist>
