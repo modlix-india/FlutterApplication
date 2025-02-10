@@ -61,8 +61,7 @@ jobs:
         run: flutter pub get
       - name: Build iOS application archive
         run: flutter build ipa --export-options-plist=ios/exportOptions.plist --verbose
-        env:
-          XCODE_XCCONFIG_FILE: ios/Flutter/Release.xcconfig
+    
       - name: Decode App Store Connect private key file and save it
         env:
           API_KEY_BASE64: ${{ secrets.iOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
