@@ -102,6 +102,8 @@ jobs:
             DEVELOPMENT_TEAM=YAN363KYTD \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             CODE_SIGN_STYLE=Automatic \
+            CODE_SIGNING_REQUIRED=YES \
+            CODE_SIGNING_ALLOWED=YES \
             archive
           
           xcodebuild -exportArchive \
