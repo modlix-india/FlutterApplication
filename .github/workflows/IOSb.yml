@@ -48,18 +48,26 @@ jobs:
 
       - name: Sign and Export IPA with Automatic Signing
         run: |
+          ls ~/Library/MobileDevice/Provisioning\ Profiles
+          
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme Runner \
             -sdk iphoneos \
             -configuration Release \
             -archivePath build/ios/archive/Runner.xcarchive \
             archive \
+            -authenticationKeyPath ~/private_keys/AuthKey_${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}.p8 \
+            -authenticationKeyID ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }} \
+            -authenticationKeyIssuerID ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }} \
             -allowProvisioningUpdates
 
           xcodebuild -exportArchive \
             -archivePath build/ios/archive/Runner.xcarchive \
             -exportOptionsPlist ios/exportOptions.plist \
             -exportPath build/ios/ipa/ \
+            -authenticationKeyPath ~/private_keys/AuthKey_${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}.p8 \
+            -authenticationKeyID ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }} \
+            -authenticationKeyIssuerID ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }} \
             -allowProvisioningUpdates
 
       - name: Decode App Store Connect private key file and save it
