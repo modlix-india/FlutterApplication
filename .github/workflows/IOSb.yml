@@ -84,19 +84,21 @@ jobs:
 
 
       - name: Sign and Export IPA with Automatic Signing
+        env:
+          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+          ISSUER_ID: ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }}
         run: |
           ls ~/Library/MobileDevice/Provisioning\ Profiles
-          API_KEY_PATH="$HOME/private_keys/AuthKey_${API_KEY}.p8"
           
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme Runner \
             -sdk iphoneos \
             -configuration Release \
             -allowProvisioningUpdates \
-            -authenticationKeyPath "$(API_KEY_PATH)" \
+            -authenticationKeyPath "$(realpath $HOME/private_keys/AuthKey_${API_KEY}.p8)" \
             -authenticationKeyID $API_KEY \
-            -authenticationKeyIssuerID ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }} \
-            -archivePath build/ios/archive/Runner.xcarchive \
+            -authenticationKeyIssuerID $ISSUER_ID \
+            -archivePath build/ios/archive/Runner.xcarchive archieve
           
           xcodebuild -exportArchive \
             -archivePath build/ios/archive/Runner.xcarchive \
