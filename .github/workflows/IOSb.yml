@@ -56,21 +56,48 @@ jobs:
           echo "Saved key at: $HOME/private_keys/AuthKey_${API_KEY}.p8"
           ls $HOME/private_keys
 
+      - name: Verify API key file exists
+        env:
+          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+        run: |
+          API_KEY_PATH="$HOME/private_keys/AuthKey_${API_KEY}.p8"
+          
+          echo "Checking for API key at: $API_KEY_PATH"
+          
+          if [ -f "$API_KEY_PATH" ]; then
+            echo "✅ API key file exists."
+          else
+            echo "❌ API key file does NOT exist!"
+            exit 1
+          fi
+      - name: Debug absolute path resolution
+        env:
+          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+        run: |
+          API_KEY_PATH="$HOME/private_keys/AuthKey_${API_KEY}.p8"
+          
+          # Print the resolved absolute path
+          echo "Resolved absolute path: $(realpath $API_KEY_PATH)"
+          
+          # List files in the directory
+          ls -la $(dirname $API_KEY_PATH)
+
+
       - name: Sign and Export IPA with Automatic Signing
         run: |
           ls ~/Library/MobileDevice/Provisioning\ Profiles
+          API_KEY_PATH="$HOME/private_keys/AuthKey_${API_KEY}.p8"
           
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme Runner \
             -sdk iphoneos \
             -configuration Release \
-            -archivePath build/ios/archive/Runner.xcarchive \
-            archive \
-            -authenticationKeyPath $HOME/private_keys/AuthKey_${API_KEY}.p8 \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$(API_KEY_PATH)" \
             -authenticationKeyID $API_KEY \
             -authenticationKeyIssuerID ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }} \
-            -allowProvisioningUpdates
-
+            -archivePath build/ios/archive/Runner.xcarchive \
+          
           xcodebuild -exportArchive \
             -archivePath build/ios/archive/Runner.xcarchive \
             -exportOptionsPlist ios/exportOptions.plist \
