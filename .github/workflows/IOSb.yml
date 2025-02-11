@@ -69,7 +69,7 @@ jobs:
             -authenticationKeyPath "$HOME/private_keys/AuthKey_${API_KEY}.p8" \
             -authenticationKeyID $API_KEY \
             -authenticationKeyIssuerID ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }} \
-            -archivePath build/Runner.xcarchive archive
+            -allowProvisioningUpdates
 
           xcodebuild -exportArchive \
             -archivePath build/ios/archive/Runner.xcarchive \
