@@ -61,6 +61,22 @@ jobs:
       - name: Build iOS application archive
         run: flutter build ipa --export-options-plist=ios/exportOptions.plist --no-codesign
 
+      - name: Sign and Export IPA with Automatic Signing
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/ios/archive/Runner.xcarchive \
+            archive \
+            -allowProvisioningUpdates
+
+          xcodebuild -exportArchive \
+            -archivePath build/ios/archive/Runner.xcarchive \
+            -exportOptionsPlist ios/exportOptions.plist \
+            -exportPath build/ios/ipa/ \
+            -allowProvisioningUpdates
+
       - name: Decode App Store Connect private key file and save it
         env:
           API_KEY_BASE64: ${{ secrets.iOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
@@ -84,7 +100,7 @@ jobs:
 
           ls ~/private_keys
 
-          xcrun altool --upload-app -f build/ios/ipa/flutter_app.ipa -t ios --apiKey $API_KEY --apiIssuer "$ISSUER_ID"
+          xcrun altool --upload-app -f build/ios/ipa/automate.ipa -t ios --apiKey $API_KEY --apiIssuer "$ISSUER_ID"
 
           ls ~/private_keys
       - name: Clean up keychain and provisioning profile
