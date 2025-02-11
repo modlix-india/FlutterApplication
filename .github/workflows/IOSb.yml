@@ -1,4 +1,3 @@
----
 name: IOS build and deploy
 on:
   push:
@@ -60,8 +59,25 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
       - name: Build iOS application archive
-        run: flutter build ipa --export-options-plist=ios/exportOptions.plist --verbose
-    
+        run: flutter build ipa --export-options-plist=ios/exportOptions.plist --verbose --no-codesign
+
+      - name: Sign and Export IPA with Automatic Signing
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/ios/archive/flutter_app.xcarchive \
+            archive \
+            -allowProvisioningUpdates
+
+          xcodebuild -exportArchive \
+            -archivePath build/ios/archive/flutter_app.xcarchive \
+            -exportOptionsPlist ios/exportOptions.plist \
+            -exportPath build/ios/ipa/ \
+            -allowProvisioningUpdates
+      
+
       - name: Decode App Store Connect private key file and save it
         env:
           API_KEY_BASE64: ${{ secrets.iOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
