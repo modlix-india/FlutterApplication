@@ -46,6 +46,16 @@ jobs:
       - name: Build iOS application archive
         run: flutter build ipa --export-options-plist=ios/exportOptions.plist --no-codesign
 
+      - name: Decode App Store Connect private key file and save it
+        env:
+          API_KEY_BASE64: ${{ secrets.iOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
+          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+        run: |
+          mkdir -p $HOME/private_keys
+          echo -n "$API_KEY_BASE64" | base64 --decode -o $HOME/private_keys/AuthKey_${API_KEY}.p8
+          echo "Saved key at: $HOME/private_keys/AuthKey_${API_KEY}.p8"
+          ls $HOME/private_keys
+
       - name: Sign and Export IPA with Automatic Signing
         run: |
           ls ~/Library/MobileDevice/Provisioning\ Profiles
@@ -56,18 +66,15 @@ jobs:
             -configuration Release \
             -archivePath build/ios/archive/Runner.xcarchive \
             archive \
-            -authenticationKeyPath ~/private_keys/AuthKey_${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}.p8 \
-            -authenticationKeyID ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }} \
+            -authenticationKeyPath "$HOME/private_keys/AuthKey_${API_KEY}.p8" \
+            -authenticationKeyID $API_KEY \
             -authenticationKeyIssuerID ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }} \
-            -allowProvisioningUpdates
+            -archivePath build/Runner.xcarchive archive
 
           xcodebuild -exportArchive \
             -archivePath build/ios/archive/Runner.xcarchive \
             -exportOptionsPlist ios/exportOptions.plist \
-            -exportPath build/ios/ipa/ \
-            -authenticationKeyPath ~/private_keys/AuthKey_${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}.p8 \
-            -authenticationKeyID ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }} \
-            -authenticationKeyIssuerID ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }} \
+            -exportPath build/ \
             -allowProvisioningUpdates
 
       - name: Decode App Store Connect private key file and save it
