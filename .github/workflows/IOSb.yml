@@ -98,7 +98,11 @@ jobs:
             -authenticationKeyPath "$(realpath $HOME/private_keys/AuthKey_${API_KEY}.p8)" \
             -authenticationKeyID $API_KEY \
             -authenticationKeyIssuerID $ISSUER_ID \
-            -archivePath build/ios/archive/Runner.xcarchive archive
+            -archivePath build/ios/archive/Runner.xcarchive
+            DEVELOPMENT_TEAM=YAN363KYTD \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            CODE_SIGN_STYLE=Automatic \
+            archive
           
           xcodebuild -exportArchive \
             -archivePath build/ios/archive/Runner.xcarchive \
