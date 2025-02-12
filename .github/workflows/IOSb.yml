@@ -11,10 +11,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Import certificates (iOS)
         env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.iOS_P12_DISTRIBUTION_CERT_BASE64 }}
-          P12_PASSWORD: ${{ secrets.iOS_P12_DISTRIBUTION_CERT_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.iOS_PROVISION_PROFILE_BASE64 }}
-          KEYCHAIN_PASSWORD: ${{ secrets.iOS_KEYCHAIN_PASSWORD }}
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.IOS_P12_DISTRIBUTION_CERT_BASE64 }}
+          P12_PASSWORD: ${{ secrets.IOS_P12_DISTRIBUTION_CERT_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
         run: |
             CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12                
             PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
@@ -48,8 +48,8 @@ jobs:
 
       - name: Decode App Store Connect private key file and save it
         env:
-          API_KEY_BASE64: ${{ secrets.iOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
-          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+          API_KEY_BASE64: ${{ secrets.IOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
+          API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
         run: |
           mkdir -p $HOME/private_keys
           echo -n "$API_KEY_BASE64" | base64 --decode -o $HOME/private_keys/AuthKey_${API_KEY}.p8
@@ -58,7 +58,7 @@ jobs:
 
       - name: Verify API key file exists
         env:
-          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+          API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
         run: |
           API_KEY_PATH="$HOME/private_keys/AuthKey_${API_KEY}.p8"
           
@@ -72,7 +72,7 @@ jobs:
           fi
       - name: Debug absolute path resolution
         env:
-          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+          API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
         run: |
           API_KEY_PATH="$HOME/private_keys/AuthKey_${API_KEY}.p8"
           
@@ -85,7 +85,7 @@ jobs:
 
       - name: Sign and Export IPA with Automatic Signing
         env:
-          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+          API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
           ISSUER_ID: ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }}
         run: |
           ls ~/Library/MobileDevice/Provisioning\ Profiles
@@ -114,8 +114,8 @@ jobs:
 
       - name: Decode App Store Connect private key file and save it
         env:
-          API_KEY_BASE64: ${{ secrets.iOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
-          API_KEY: ${{ secrets.iOS_APPSTORE_CONNECT_API_KEY_ID }}
+          API_KEY_BASE64: ${{ secrets.IOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
+          API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
         run: |
           mkdir -p ~/private_keys
           echo -n "$API_KEY_BASE64" | base64 --decode -o ~/private_keys/AuthKey_$API_KEY.p8
