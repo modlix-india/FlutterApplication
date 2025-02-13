@@ -44,7 +44,7 @@ jobs:
 
       - name: Build xArchive
         run: |
-            xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=YAN363KYTD -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath build-output/app.xcarchive PROVISIONING_PROFILE=4ccd3d24-19d1-4f2f-8e39-9ec52e28673f clean archive CODE_SIGN_IDENTITY="Apple Distribution: Damien Aicheh"
+            xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=YAN363KYTD -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath build-output/app.xcarchive PROVISIONING_PROFILE=79722211-2942-4676-9832-3ac7097f0aab clean archive CODE_SIGN_IDENTITY="Apple Distribution: Damien Aicheh"
 
       - name: Clean up keychain and provisioning profile
         if: ${{ always() }}
