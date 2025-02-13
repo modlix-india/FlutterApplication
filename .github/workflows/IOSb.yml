@@ -48,13 +48,6 @@ jobs:
         run: |
             xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=YAN363KYTD -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath build-output/app.xcarchive PROVISIONING_PROFILE=a9fa9ebe-ed8f-4a8e-8549-24cfebb5a6dd clean archive CODE_SIGN_IDENTITY="Apple Distribution: APYA CAPITAL SERVICES PRIVATE LIMITED"
 
-      - name: Clean up keychain and provisioning profile
-        if: ${{ always() }}
-        run: |
-          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
-          rm ~/Library/MobileDevice/Provisioning\
-          Profiles/build_pp.mobileprovision
-
       - name: Export ipa
         run: xcodebuild -exportArchive -archivePath build-output/app.xcarchive -exportPath build-output/ios -exportOptionsPlist ios/ExportOptions.plist
 
