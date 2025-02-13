@@ -107,7 +107,7 @@ jobs:
           API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
         run: |
           echo "Before uploading: "
-          xcrun altool --upload-app -f build/ios/ipa/automate.ipa -t ios --apiKey $API_KEY --apiIssuer "$ISSUER_ID"
+          xcrun altool --upload-app -f build/ios/ipa/automate.ipa -t ios --apiKey ${API_KEY} --apiIssuer ${ISSUER_ID}
 
       - name: Clean up keychain and provisioning profile
         if: ${{ always() }}
