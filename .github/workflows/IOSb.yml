@@ -105,8 +105,6 @@ jobs:
             -configuration Release \
             -allowProvisioningUpdates \
             -archivePath build/ios/archive/Runner.xcarchive
-            DEVELOPMENT_TEAM=YAN363KYTD \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
             CODE_SIGN_STYLE=Manual \
             PRODUCT_BUNDLE_IDENTIFIER=com.FlutterAuto.automateApp \
             archive
