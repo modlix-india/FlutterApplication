@@ -91,24 +91,6 @@ jobs:
           # List files in the directory
           ls -la $(dirname $API_KEY_PATH)
 
-
-      - name: Sign and Export IPA with Automatic Signing
-        env:
-          API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
-          ISSUER_ID: ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }}
-        run: |
-          ls ~/Library/MobileDevice/Provisioning\ Profiles
-          
-          xcodebuild -workspace ios/Runner.xcworkspace \
-            -scheme Runner \
-            -sdk iphoneos \
-            -configuration Release \
-            -allowProvisioningUpdates \
-            -archivePath build/ios/archive/Runner.xcarchive
-            CODE_SIGN_STYLE=Manual \
-            PRODUCT_BUNDLE_IDENTIFIER=com.FlutterAuto.automateApp \
-            archive
-
       - name: Decode App Store Connect private key file and save it
         env:
           API_KEY_BASE64: ${{ secrets.IOS_APPSTORE_CONNECT_PRIVATE_KEY_BASE64 }}
