@@ -37,6 +37,11 @@ jobs:
             mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
             cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
+      - name: Verify Provisioning Profile Installation
+        run: |
+          echo "Checking installed provisioning profiles..."
+          ls -l ~/Library/MobileDevice/Provisioning\ Profiles
+
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -103,7 +108,6 @@ jobs:
             DEVELOPMENT_TEAM=YAN363KYTD \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             CODE_SIGN_STYLE=Manual \
-            PROVISIONING_PROFILE_SPECIFIER="${{ secrets.IOS_PROVISION_PROFILE_NAME }}" \
             PRODUCT_BUNDLE_IDENTIFIER=com.FlutterAuto.automateApp \
             archive
 
