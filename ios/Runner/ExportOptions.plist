@@ -12,7 +12,7 @@
         <key>provisioningProfiles</key>
        	<dict>
        		<key>com.FlutterAuto.automateApp</key>
-       		<string>inAppBrowserProvision</string>
+       		<string>4ccd3d24-19d1-4f2f-8e39-9ec52e28673f</string>
        	</dict>
    </dict>
 </plist>
