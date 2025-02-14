@@ -54,10 +54,7 @@ jobs:
             CODE_SIGN_IDENTITY="Apple Distribution: APYA CAPITAL SERVICES PRIVATE LIMITED"
 
       - name: Export ipa file
-        run: xcodebuild -exportArchive \
-            -archivePath "build-output/app.xcarchive" \
-            -exportPath "build-output/ios" \
-            -exportOptionsPlist "ios/ExportOptions.plist"
+        run: xcodebuild -exportArchive -archivePath build-output/app.xcarchive -exportPath build-output/ios -exportOptionsPlist ios/ExportOptions.plist
 
       - name: Save App Store Connect API Key
         run: |
