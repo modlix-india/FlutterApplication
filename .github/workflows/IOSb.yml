@@ -65,7 +65,7 @@ jobs:
       - name: Upload to App Store Connect
         run: |
           echo "Uploading IPA to App Store Connect..."
-          xcrun altool --upload-app -f build-output/ios/Runner.ipa -t ios --apiKey ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }} --apiIssuer ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }}
+          xcrun altool --upload-app -f build-output/ios/automate.ipa -t ios --apiKey ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }} --apiIssuer ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }}
 
       - name: Clean up keychain and provisioning profile
         if: ${{ always() }}
