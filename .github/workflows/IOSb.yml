@@ -47,9 +47,7 @@ jobs:
             xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme Runner \
             -configuration Release \
-            -sdk iphoneos \ 
-            -destination 'generic/platform=iOS'\
-            -archivePath build-output/app.xcarchive \
+            -sdk iphoneos -destination 'generic/platform=iOS' -archivePath build-output/app.xcarchive \
             DEVELOPMENT_TEAM=YAN363KYTD
             PROVISIONING_PROFILE=a9fa9ebe-ed8f-4a8e-8549-24cfebb5a6dd \
             clean archive \
@@ -62,12 +60,9 @@ jobs:
             -exportOptionsPlist ios/ExportOptions.plist
 
       - name: Save App Store Connect API Key
-        env:
-            API_KEY_BASE64: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_BASE64  }}
-            API_KEY: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}
         run: |
             mkdir -p ~/.private_keys
-            echo -n "$API_KEY_BASE64" | base64 --decode --output ~/.private_keys/AuthKey_$API_KEY.p8
+            echo -n ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_BASE64  }} | base64 --decode --output ~/.private_keys/AuthKey_${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_ID }}.p8
             echo "App Store Connect API Key saved!"
 
       - name: Upload to App Store Connect
