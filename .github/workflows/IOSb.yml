@@ -55,9 +55,9 @@ jobs:
 
       - name: Export ipa file
         run: xcodebuild -exportArchive \
-            -archivePath build-output/app.xcarchive \
-            -exportPath build-output/ios \
-            -exportOptionsPlist ios/ExportOptions.plist
+            -archivePath "build-output/app.xcarchive" \
+            -exportPath "build-output/ios" \
+            -exportOptionsPlist "ios/ExportOptions.plist"
 
       - name: Save App Store Connect API Key
         run: |
